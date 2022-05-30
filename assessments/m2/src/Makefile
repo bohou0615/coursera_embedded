@@ -24,7 +24,7 @@
 include sources.mk
 
 TARGET = c1m2
-# Platform Overrides
+
 PLATFORM = HOST
 
 GEN_FLAGS = \
@@ -35,7 +35,7 @@ GEN_FLAGS = \
 			-std=c99
 
 ifeq ($(PLATFORM),HOST) 
-# Architectures Specific Flags
+
 	CC = gcc
 	CFLAGS = $(GEN_FLAGS)
 	CPPFLAGS = -DHOST $(INCLUDES)
