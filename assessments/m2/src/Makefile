@@ -34,13 +34,14 @@ GEN_FLAGS = \
 			-O0 \
 			-std=c99
 
+#HOST
 ifeq ($(PLATFORM),HOST) 
 
 	CC = gcc
 	CFLAGS = $(GEN_FLAGS)
 	CPPFLAGS = -DHOST $(INCLUDES)
 	SIZE = size
-
+#msp432
 else
 	CPU = cortex-m4
 	ARCH = armv7e-m
