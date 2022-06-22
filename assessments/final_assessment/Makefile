@@ -23,7 +23,7 @@
 #------------------------------------------------------------------------------
 include sources.mk
 
-TARGET = final_assesment
+TARGET = course1
 
 PLATFORM = HOST
 
@@ -36,30 +36,28 @@ GEN_FLAGS = \
 			
 INCLUDES = -I include/common/
 
+LINKER_FILE = -T msp432p401r.lds
+CPU = cortex-m4
+ARCH = armv7e-m
+
+TEST = NO
+
+
 #HOST
 ifeq ($(PLATFORM),HOST) 
-
 	CC = gcc
 	CFLAGS = $(GEN_FLAGS)
+	LD = ld
 	CPPFLAGS = -DHOST $(INCLUDES)
 	SIZE = size
-	LDFLAGS = -lm
+	LDFLAGS = -Wl,-Map=$(TARGET).map
+	OBJDUMP = objdump
 #msp432
 else
-	CPU = cortex-m4
-	ARCH = armv7e-m
-	SOURCES+= 	./startup_msp432p401r_gcc.c \
-				./system_msp432p401r.c \
-				./interrupts_msp432p401r_gcc.c
-	INCLUDES+= 	-I ../include/CMSIS/ \
-				-I ../include/msp432/
 	CC = arm-none-eabi-gcc
 	LD = arm-none-eabi-ld
 	SIZE = arm-none-eabi-size
-	LINKER_FILE = ../msp432p401r.lds
-	LDFLAGS = -Wl,-Map=$(TARGET).map -T $(LINKER_FILE) -lm
-
-
+	LDFLAGS = -Wl,-Map=$(TARGET).map -L ../ $(LINKER_FILE)
 	CFLAGS = 	$(GEN_FLAGS) \
 				-mcpu=$(CPU) \
 				-mthumb \
@@ -68,14 +66,15 @@ else
 				-mfpu=fpv4-sp-d16\
 				--specs=nosys.specs
 	CPPFLAGS = -DMSP432 $(INCLUDES)
+	OBJDUMP = arm-none-eabi-objdump
 
 endif
 
-ifeq ($(COURSE1), true)
-	CPPFLAGS += -DCOURSE1
-endif
-ifeq ($(VERBOSE), true)
-	CPPFLAGS += -DVERBOSE
+#test flag
+ifeq ($(TEST), YES)
+	TESTFLAGS = -D COURSE1 -D VERBOSE
+else
+	TESTFLAGS = -D COURSE1
 endif
 
 OBJS = $(SOURCES:.c=.o)
@@ -85,13 +84,11 @@ DEPS = $(SOURCES:.c=.d)
 
 
 %.i: %.c
-	$(CC) -E $< $(CFLAGS) $(CPPFLAGS) -o $@
+	$(CC) -E $< $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TESTFLAGS) -o $@
 %.asm: %.c
-	$(CC) -S $< $(CFLAGS) $(CPPFLAGS) -o $@
+	$(CC) -S $< $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TESTFLAGS) -o $@
 %.o: %.c
-	$(CC) -c $< $(CFLAGS) $(CPPFLAGS) -o $@
-%.d: %c
-	$(CC) -E -M $<  $(CPPFLAGS) -o $@
+	$(CC) -c $< $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TESTFLAGS) -o $@
 
 .PHONY: compile-all 
 compile-all: $(OBJS)
@@ -99,13 +96,19 @@ compile-all: $(OBJS)
 .PHONY: build
 build: $(TARGET).out 
 
-$(TARGET).out: $(OBJS)
-	$(CC) $(OBJS) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o $@
+$(TARGET).out: $(SOURCES)
+	$(CC) $(SOURCES) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TESTFLAGS) -o $@
 	$(SIZE) $@
+
+.PHONY: all_files
+all_files: $(SOURCES)
+	make $(PREP)
+	make $(ASMS)
+	make compile-all
+	make $(TARGET).out
+	$(OBJDUMP) -t $(TARGET).out > $(TARGET).symbol_table
 
 .PHONY: clean
 clean:
-		rm -f *.out *.map *.o *.asm *.i
+		rm -f *.o *.i *.asm  $(TARGET).out*  $(TARGET).map
 
-run: $(TARGET).out
-	./$(TARGET).out

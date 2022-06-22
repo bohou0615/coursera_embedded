@@ -1,3 +1,21 @@
+### author Danny 
+### JUN 22 2022
+
+## Guide to use
+
+### Build
+you can change different platform Host or MSP432
+```
+$ make build PLATFORM=HOST COURSE=COURSE1 VERBOSE=VERBOSE
+```
+### VERBOSE
+``` 
+$ ./course1.out
+```
+### Clean
+```
+$ make clean
+
 /******************************************************************************
  * Copyright (C) 2017 by Alex Fosdick - University of Colorado
  *
@@ -8,24 +26,4 @@
  * misuse of this material. 
  *
  *****************************************************************************/
-/**
- * @file main.c
- * @final Assessment
- *
- * @author Danny Wu
- * @date May 15 2022
- *
- */
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include "course1.h"
-
-
-int main(void) {
-  #ifdef COURSE1
-  printf("calling course1()\n");
-  course1();
-  #endif
-}
 

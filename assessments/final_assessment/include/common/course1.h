@@ -41,7 +41,7 @@ enum base{BASE_2=2, BASE_10=10, BASE_16=16};
  *
  * @return void
  */
-void course1(void);
+int8_t course1(void);
 
 /**
  * @brief function to run course1 data operations

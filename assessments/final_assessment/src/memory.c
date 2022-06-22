@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
-
+#include <stddef.h>
 /***********************************************************
  Function Definitions
 ***********************************************************/
