@@ -1,4 +1,4 @@
-###******************************************************************************
+###{
 # Copyright (C) 2017 by Alex Fosdick - University of Colorado
 #
 # Redistribution, modification or use of this software in source or binary
@@ -7,7 +7,7 @@
 # software. Alex Fosdick and the University of Colorado are not liable for any
 # misuse of this material. 
 #
-###*****************************************************************************
+}
 
 
 ### This is a free access repository for the Coursera Specialization of Embedded
